@@ -1,13 +1,17 @@
 /* eslint-disable import/no-unresolved */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { Banner, CreatorCard, NftCard } from '@/components';
 import images from '../assets';
 import { makeId } from '@/utils/makeId';
+import { NFTContext } from '@/context/NFTContext';
 
 const Home = () => {
+  const { fetchNFTs } = useContext(NFTContext);
+
   const [hideButtons, setHideButtons] = useState(false);
+  const [nfts, setNfts] = useState([]);
   const parentRef = useRef(null);
   const scrollRef = useRef(null);
   const { theme } = useTheme();
@@ -20,6 +24,11 @@ const Home = () => {
       current.scrollLeft += scrollAmount;
     }
   };
+  useEffect(() => {
+    fetchNFTs().then((items) => {
+      setNfts(items);
+    });
+  }, []);
   const isScrollable = () => {
     const { current } = scrollRef;
     const { current: parent } = parentRef;
