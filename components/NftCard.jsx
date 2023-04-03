@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import images from '../assets';
 import { NFTContext } from '@/context/NFTContext';
+import { shortenAddress } from '@/utils/shortenAddress';
 
 const NftCard = ({ nft }) => {
   const { nftCurrency } = useContext(NFTContext);
@@ -22,7 +23,9 @@ const NftCard = ({ nft }) => {
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">{nft.name}</p>
           <div className="flexBetween mt-1 minlg:mt-3 flex-row xs:flex-col xs:items-start xs:mt-3">
             <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">{nft.price} <span className="normal">{nftCurrency}</span></p>
-            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">{nft.seller}</p>
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">
+              {nft.seller.length > 10 ? shortenAddress(nft.seller) : nft.seller}
+            </p>
           </div>
         </div>
       </div>
