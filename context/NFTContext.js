@@ -26,6 +26,7 @@ export const NFTContext = React.createContext();
 
 export const NFTProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState('');
+  const [isLoadingNFT, setIsLoadingNFT] = useState(false);
   const nftCurrency = 'ETH';
 
   const checkIfWalletIsConnected = async () => {
@@ -67,8 +68,10 @@ export const NFTProvider = ({ children }) => {
     const price = ethers.utils.parseUnits(formInputPrice, 'ether');
     const contract = fetchContract(signer);
     const listingPrice = await contract.getListingPrice();
-    const transaction = await contract.createToken(url, price, { value: listingPrice.toString() });
-
+    const transaction = !isReselling
+      ? await contract.createToken(url, price, { value: listingPrice.toString() })
+      : await contract.resellToken(id, price, { value: listingPrice.toString() });
+    setIsLoadingNFT(true);
     await transaction.wait();
   };
   const createNFT = async (formInput, fileUrl, router) => {
@@ -86,6 +89,8 @@ export const NFTProvider = ({ children }) => {
     }
   };
   const fetchNFTs = async () => {
+    setIsLoadingNFT(false);
+
     const provider = new ethers.providers.JsonRpcProvider();
     const contract = fetchContract(provider);
     const data = await contract.fetchMarketItems();
@@ -108,6 +113,8 @@ export const NFTProvider = ({ children }) => {
     return items;
   };
   const fetchMyNFTsOrListedNFTs = async (type) => {
+    setIsLoadingNFT(false);
+
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
@@ -144,11 +151,14 @@ export const NFTProvider = ({ children }) => {
     const contract = fetchContract(signer);
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
     const transaction = await contract.createMarketSale(nft.tokenId, { value: price });
+    setIsLoadingNFT(true);
+
     await transaction.wait();
+    setIsLoadingNFT(false);
   };
 
   return (
-    <NFTContext.Provider value={{ nftCurrency, connectWallet, currentAccount, uploadToIPFS, createNFT, fetchNFTs, fetchMyNFTsOrListedNFTs, buyNft }}>
+    <NFTContext.Provider value={{ nftCurrency, connectWallet, currentAccount, uploadToIPFS, createNFT, fetchNFTs, fetchMyNFTsOrListedNFTs, buyNft, createSale, isLoadingNFT }}>
       {children}
     </NFTContext.Provider>
   );

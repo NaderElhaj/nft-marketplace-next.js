@@ -40,7 +40,7 @@ const NftDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [paymentModal, setPaymentModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
-  const { currentAccount, nftCurrency, buyNft } = useContext(NFTContext);
+  const { currentAccount, nftCurrency, buyNft, isLoadingNFT } = useContext(NFTContext);
   const [nft, setNft] = useState({
     image: '',
     tokenId: '',
@@ -107,7 +107,8 @@ const NftDetails = () => {
                 <Button
                   btnName="List on Marketplace"
                   classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                  handleClick={() => router.push(`/resell-nft?tokenId=${nft.tokenId}$tokenURI=${nft.tokenURI}`)}
+                  handleClick={() => router.push(`/resell-nft?id=${nft.tokenId}&tokenURI=${nft.tokenURI}`)}
+
                 />
               )
               : (
@@ -133,6 +134,20 @@ const NftDetails = () => {
             />
           </div>
 
+        )}
+        handleClose={() => setPaymentModal(false)}
+      />
+      )}
+      { isLoadingNFT && (
+      <Modal
+        header="Buting NFT .."
+        body={(
+          <div className="flexCenter flex-col text-center">
+
+            <div className="relative w-52 h-52">
+              <Loader />
+            </div>
+          </div>
         )}
         handleClose={() => setPaymentModal(false)}
       />
