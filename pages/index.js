@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { Banner, CreatorCard, Loader, NftCard, SearchBar } from '@/components';
 import images from '../assets';
-import { makeId } from '@/utils/makeId';
 import { NFTContext } from '@/context/NFTContext';
 import { getCreators } from '@/utils/gettopCreators';
 import { shortenAddress } from '@/utils/shortenAddress';
